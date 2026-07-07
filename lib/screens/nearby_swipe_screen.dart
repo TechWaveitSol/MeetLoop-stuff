@@ -24,7 +24,7 @@ class _SwipeConnectionScreenState extends State<SwipeConnectionScreen> {
       'matchScore': 94,
     },
     {
-      'name': 'Rohan',
+      'name': 'Siddu',
       'age': 24,
       'distance': '1.8 km away',
       'bio': 'Always down for game nights or cafe hopping! Play chess or Connect Four? ♟️ Let\'s connect and create memories.',

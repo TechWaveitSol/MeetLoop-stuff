@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warm white matching AppTheme.bgWarm (#FFFDFC) — used for launch background to prevent black flash -->
+    <color name="launch_background_color">#FFFDFC</color>
+	<color name="ic_launcher_background">#000000</color>
+</resources>

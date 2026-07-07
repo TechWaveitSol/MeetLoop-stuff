@@ -26,118 +26,124 @@ void main() {
   );
 }
 
+final routerProvider = Provider<GoRouter>((ref) {
+  // Watch authStateProvider to recreate/re-run GoRouter on changes
+  ref.watch(authStateProvider);
+
+  return GoRouter(
+    initialLocation: '/splash',
+    redirect: (context, state) {
+      final loggedIn = ref.read(authStateProvider);
+      final isGoingToAuth = state.matchedLocation.startsWith('/auth') || 
+                            state.matchedLocation == '/splash' || 
+                            state.matchedLocation == '/onboarding';
+
+      if (!loggedIn && !isGoingToAuth) {
+        return '/auth/login';
+      }
+      if (loggedIn && isGoingToAuth) {
+        return '/home';
+      }
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/auth/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/auth/signup',
+        builder: (context, state) => const SignUpScreen(),
+      ),
+      GoRoute(
+        path: '/auth/forgot',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/auth/otp',
+        builder: (context, state) => const OtpScreen(),
+      ),
+      // Shell navigation routes
+      ShellRoute(
+        builder: (context, state, child) => MainShellLayout(child: child),
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const DashboardScreen(),
+          ),
+          GoRoute(
+            path: '/explore',
+            builder: (context, state) => const ExploreScreen(),
+          ),
+          GoRoute(
+            path: '/friends',
+            builder: (context, state) => const FriendsScreen(),
+          ),
+          GoRoute(
+            path: '/nearby',
+            builder: (context, state) => const SwipeConnectionScreen(),
+          ),
+          GoRoute(
+            path: '/radar-map',
+            builder: (context, state) => const RadarMapScreen(),
+          ),
+          GoRoute(
+            path: '/chats',
+            builder: (context, state) => const ChatListScreen(),
+            routes: [
+              GoRoute(
+                path: 'chat/:id',
+                builder: (context, state) {
+                  final chatId = state.pathParameters['id'] ?? 'c1';
+                  return InteractiveChatScreen(chatId: chatId);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/events',
+            builder: (context, state) => const NearbyEventsScreen(),
+          ),
+          GoRoute(
+            path: '/games',
+            builder: (context, state) => const GamesLobbyScreen(),
+          ),
+          GoRoute(
+            path: '/travel',
+            builder: (context, state) => const TravelPlannerScreen(),
+          ),
+          GoRoute(
+            path: '/couple-space',
+            builder: (context, state) => const CoupleSpaceScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+          GoRoute(
+            path: '/edit-profile',
+            builder: (context, state) => const EditProfileScreen(),
+          ),
+        ],
+      ),
+    ],
+  );
+});
+
 class MeetLoopApp extends ConsumerWidget {
   const MeetLoopApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
-    final GoRouter router = GoRouter(
-      initialLocation: '/splash',
-      redirect: (context, state) {
-        final loggedIn = ref.read(authStateProvider);
-        final isGoingToAuth = state.matchedLocation.startsWith('/auth') || 
-                              state.matchedLocation == '/splash' || 
-                              state.matchedLocation == '/onboarding';
-
-        if (!loggedIn && !isGoingToAuth) {
-          return '/auth/login';
-        }
-        if (loggedIn && isGoingToAuth) {
-          return '/home';
-        }
-        return null;
-      },
-      routes: [
-        GoRoute(
-          path: '/splash',
-          builder: (context, state) => const SplashScreen(),
-        ),
-        GoRoute(
-          path: '/onboarding',
-          builder: (context, state) => const OnboardingScreen(),
-        ),
-        GoRoute(
-          path: '/auth/login',
-          builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: '/auth/signup',
-          builder: (context, state) => const SignUpScreen(),
-        ),
-        GoRoute(
-          path: '/auth/forgot',
-          builder: (context, state) => const ForgotPasswordScreen(),
-        ),
-        GoRoute(
-          path: '/auth/otp',
-          builder: (context, state) => const OtpScreen(),
-        ),
-        // Shell navigation routes
-        ShellRoute(
-          builder: (context, state, child) => MainShellLayout(child: child),
-          routes: [
-            GoRoute(
-              path: '/home',
-              builder: (context, state) => const DashboardScreen(),
-            ),
-            GoRoute(
-              path: '/explore',
-              builder: (context, state) => const ExploreScreen(),
-            ),
-            GoRoute(
-              path: '/friends',
-              builder: (context, state) => const FriendsScreen(),
-            ),
-            GoRoute(
-              path: '/nearby',
-              builder: (context, state) => const SwipeConnectionScreen(),
-            ),
-            GoRoute(
-              path: '/radar-map',
-              builder: (context, state) => const RadarMapScreen(),
-            ),
-            GoRoute(
-              path: '/chats',
-              builder: (context, state) => const ChatListScreen(),
-              routes: [
-                GoRoute(
-                  path: 'chat/:id',
-                  builder: (context, state) {
-                    final chatId = state.pathParameters['id'] ?? 'c1';
-                    return InteractiveChatScreen(chatId: chatId);
-                  },
-                ),
-              ],
-            ),
-            GoRoute(
-              path: '/events',
-              builder: (context, state) => const NearbyEventsScreen(),
-            ),
-            GoRoute(
-              path: '/games',
-              builder: (context, state) => const GamesLobbyScreen(),
-            ),
-            GoRoute(
-              path: '/travel',
-              builder: (context, state) => const TravelPlannerScreen(),
-            ),
-            GoRoute(
-              path: '/couple-space',
-              builder: (context, state) => const CoupleSpaceScreen(),
-            ),
-            GoRoute(
-              path: '/profile',
-              builder: (context, state) => const ProfileScreen(),
-            ),
-            GoRoute(
-              path: '/edit-profile',
-              builder: (context, state) => const EditProfileScreen(),
-            ),
-          ],
-        ),
-      ],
-    );
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: 'MeetLoop',
@@ -357,7 +363,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(36),
                     child: Image.asset(
-                      'assets/images/splash_logo.png',
+                      'assets/images/splash_logo.jpeg',
                       width: size.width * 0.58,
                       height: size.width * 0.58,
                       fit: BoxFit.cover,
